@@ -57,20 +57,7 @@ public class NoteServlet extends HttpServlet {
     {
         String noteId = request.getParameter("noteId");
         String contents = request.getParameter("contents");
-        String action = request.getParameter("action");
-        DateFormat dateFormat = new SimpleDateFormat("YYYY-MM-DD");
-        String dateString = request.getParameter("dateCreated");
-        java.sql.Date date = null;
-        try {
-            if (dateString != null)
-            {
-                date = new java.sql.Date(dateFormat.parse(dateString).getTime());
-            }
-        } catch (ParseException ex) {
-            Logger.getLogger(NoteServlet.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        
+        String action = request.getParameter("action");        
 
         NoteService us = new NoteService();
 
@@ -79,8 +66,9 @@ public class NoteServlet extends HttpServlet {
                 String selectedNoteId = request.getParameter("selectedNoteId");
                 us.delete(us.get(Integer.parseInt(selectedNoteId)));
             } else if (action.equals("edit")) {
-                Note note = new Note(Integer.parseInt(noteId), date, contents);
-                us.update(note.getNoteId(), note.getDateCreated(), note.getContents());
+                Note note = us.get(Integer.parseInt(noteId));
+                note.setContents(contents);
+                us.update(note);
             } else if (action.equals("add")) {
                 us.insert(contents);
             }
